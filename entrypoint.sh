@@ -9,4 +9,4 @@ python manage.py migrate
 
 # Inicia el servidor con gunicorn (watchmedo temporalmente deshabilitado por compatibilidad)
 echo "Starting the server with gunicorn..."
-gunicorn -b 0.0.0.0:8080 app.wsgi:application 
+watchmedo auto-restart --directory=./ --pattern=*.py --recursive -- gunicorn -b 0.0.0.0:8080 app.wsgi:application
