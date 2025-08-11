@@ -23,7 +23,7 @@ urllib3==2.1.0
 PyJWT==2.8.0
 
 # Logging y manejo de errores
-watchdog==3.0.0
+watchdog==4.0.0
 
 # Utilidades de desarrollo
 Faker==20.1.0
