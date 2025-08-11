@@ -1,0 +1,41 @@
+# WhatsApp Notification Service - Enid Store
+# Dependencias siguiendo las reglas del backend: Django 4.2.7, sin Redis innecesario
+
+# Django y REST Framework
+Django==4.2.7
+djangorestframework==3.14.0
+djangorestframework-simplejwt==5.3.1
+django-cors-headers==4.3.1
+
+# Base de datos
+psycopg2-binary==2.9.9
+dj-database-url==2.1.0
+
+# Configuración y utilidades
+python-decouple==3.8
+Pillow==10.2.0
+
+# HTTP y API
+requests==2.31.0
+urllib3==2.1.0
+
+# Validación y serialización
+PyJWT==2.8.0
+
+# Logging y manejo de errores
+watchdog==3.0.0
+
+# Utilidades de desarrollo
+Faker==20.1.0
+django-seed==0.3.1
+
+# Servidor y desarrollo
+gunicorn==21.2.0
+# watchmedo temporalmente comentado por compatibilidad con Python 3.8
+# watchmedo  # OBLIGATORIO según reglas del backend
+
+# Circuit Breaker Pattern (obligatorio según reglas del backend)
+pybreaker==1.0.1
+
+# Documentación API
+drf-yasg==1.21.7 

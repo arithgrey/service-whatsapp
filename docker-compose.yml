@@ -1,0 +1,68 @@
+version: '3'
+
+services:
+  microservice_enid:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: whatsapp_service
+    container_name: whatsapp_service
+    ports:
+      - "8092:8080"  # Puerto externo 8092, interno 8080
+    env_file:
+      - .env
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT:-development}
+      - DEBUG=${DEBUG:-False}
+      - DJANGO_SETTINGS_MODULE=app.settings
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=${DB_NAME:-whatsapp_service}
+      - DB_USER=${DB_USER:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
+      - SECRET_KEY=${SECRET_KEY:-django-insecure-whatsapp-notification-service-key}
+      - WHATSAPP_API_URL=${WHATSAPP_API_URL:-https://graph.facebook.com/v18.0}
+      - WHATSAPP_PHONE_NUMBER_ID=${WHATSAPP_PHONE_NUMBER_ID:-}
+      - WHATSAPP_ACCESS_TOKEN=${WHATSAPP_ACCESS_TOKEN:-}
+      - WHATSAPP_VERIFY_TOKEN=${WHATSAPP_VERIFY_TOKEN:-}
+      - ENID_STORE_URL=${ENID_STORE_URL:-http://localhost:8000}
+      - ENID_STORE_API_KEY=${ENID_STORE_API_KEY:-}
+      - OAUTH_SERVICE_URL=${OAUTH_SERVICE_URL:-http://service-oauth:8087}
+      - CIRCUIT_BREAKER_FAILURE_THRESHOLD=${CIRCUIT_BREAKER_FAILURE_THRESHOLD:-5}
+      - CIRCUIT_BREAKER_RECOVERY_TIMEOUT=${CIRCUIT_BREAKER_RECOVERY_TIMEOUT:-60}
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app
+    networks:
+      - backend
+      - enid_service_network
+
+  postgres:
+    container_name: whatsapp_postgres
+    image: postgres:alpine
+    ports:
+      - "5440:5432"  # Puerto externo 5440 para evitar conflictos
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB=${DB_NAME:-whatsapp_service}
+      - POSTGRES_USER=${DB_USER:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-postgres}
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      retries: 5
+
+volumes:
+  postgres_data:
+
+networks:
+  backend:
+    driver: bridge
+  enid_service_network:
+    external: true 
