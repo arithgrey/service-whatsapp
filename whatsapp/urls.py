@@ -39,4 +39,7 @@ urlpatterns = [
     # Nuevas URLs para notificaciones de pedidos
     path('order-notification/', views.SendOrderNotificationView.as_view(), name='send_order_notification'),
     path('bulk-order-notifications/', views.SendBulkOrderNotificationsView.as_view(), name='send_bulk_order_notifications'),
+    
+    # Endpoint de prueba para WhatsApp
+    path('test/hola-jon/', views.TestHolaJonView.as_view(), name='test_hola_jon'),
 ] 
