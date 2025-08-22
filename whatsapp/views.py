@@ -584,3 +584,90 @@ class SendBulkOrderNotificationsView(APIView):
                 'success': False,
                 'error': 'Error interno del servidor'
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR) 
+
+
+class TestHolaJonView(APIView):
+    """
+    Vista de prueba para enviar un saludo de WhatsApp al número 5552967027
+    Endpoint: GET /test/hola-jon
+    """
+    permission_classes = [AllowAny]  # Permitir acceso sin autenticación para pruebas
+    
+    @swagger_auto_schema(
+        operation_description="Endpoint de prueba para enviar un saludo de WhatsApp",
+        operation_summary="Prueba de envío de WhatsApp",
+        responses={
+            200: openapi.Response(
+                description="Mensaje enviado exitosamente",
+                examples={
+                    "application/json": {
+                        "success": True,
+                        "message": "Mensaje de prueba enviado exitosamente",
+                        "data": {
+                            "phone_number": "5552967027",
+                            "message_content": "¡Hola Jon! Este es un mensaje de prueba del servicio de WhatsApp.",
+                            "message_id": "msg_123456789"
+                        }
+                    }
+                }
+            ),
+            400: openapi.Response(
+                description="Error en el envío del mensaje",
+                examples={
+                    "application/json": {
+                        "success": False,
+                        "error": "Error enviando mensaje de prueba"
+                    }
+                }
+            ),
+            500: openapi.Response(
+                description="Error interno del servidor",
+                examples={
+                    "application/json": {
+                        "success": False,
+                        "error": "Error interno del servidor"
+                    }
+                }
+            )
+        },
+        tags=["Pruebas"]
+    )
+    def get(self, request):
+        """
+        Envía un mensaje de prueba de WhatsApp al número 5552967027
+        """
+        try:
+            phone_number = "5552967027"
+            message_content = "¡Hola Jon! Este es un mensaje de prueba del servicio de WhatsApp."
+            
+            # Enviar mensaje usando el servicio
+            success, response_message = whatsapp_service.send_text_message(
+                phone_number=phone_number,
+                message=message_content,
+                order_id="TEST_HOLA_JON"
+            )
+            
+            if success:
+                logger.info(f"Mensaje de prueba enviado exitosamente a {phone_number}")
+                return Response({
+                    'success': True,
+                    'message': 'Mensaje de prueba enviado exitosamente',
+                    'data': {
+                        'phone_number': phone_number,
+                        'message_content': message_content,
+                        'message_id': response_message if 'id' in response_message else 'N/A'
+                    }
+                }, status=status.HTTP_200_OK)
+            else:
+                logger.error(f"Error enviando mensaje de prueba a {phone_number}: {response_message}")
+                return Response({
+                    'success': False,
+                    'error': f'Error enviando mensaje de prueba: {response_message}'
+                }, status=status.HTTP_400_BAD_REQUEST)
+                
+        except Exception as e:
+            logger.error(f"Error inesperado en endpoint de prueba: {str(e)}")
+            return Response({
+                'success': False,
+                'error': 'Error interno del servidor'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR) 
